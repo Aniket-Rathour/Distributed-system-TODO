@@ -18,6 +18,7 @@ func main(){
 	err := godotenv.Load("../.env")
 	if err != nil {
 		fmt.Println("thre was a error reading env")
+		os.Exit(2)
 	}
 	//ctx1 := make(chan os.Signal ,1 )
 	ctx , stop := signal.NotifyContext(context.Background() , os.Interrupt, syscall.SIGTERM)
