@@ -2,7 +2,9 @@ package db
 
 import (
 	"context"
+	"fmt"
 	"os"
+
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -12,5 +14,6 @@ func Connect(ctx context.Context) (*pgxpool.Pool , error){
 	if err!= nil {
 		return nil , err
 	}
+	fmt.Println("succufully connected to db....")
 	return pool , nil
 }

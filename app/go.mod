@@ -1,4 +1,4 @@
-module github.com/Aniket-Rathour/Todo
+module github.com/Aniket-Rathour/Distibuted-system-TODO
 
 go 1.25.4
 
