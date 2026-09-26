@@ -15,6 +15,7 @@ func Insert(ctx context.Context , pool *pgxpool.Pool , name, pass string) (int ,
 	if err != nil {
 		return 0 ,time.Time{} , err
 	}
+	CreateSession(ctx, pool , id)
 	return id , created , nil
 }
 func InsertPosts(ctx context.Context , pool *pgxpool.Pool , title, description string , userId int) (int , time.Time ,error){

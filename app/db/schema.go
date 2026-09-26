@@ -13,6 +13,13 @@ func CreateUserTable(ctx context.Context, pool *pgxpool.Pool) error {
 	password VARCHAR(100) NOT NULL,
 	created_at TIMESTAMP DEFAULT now()
 	);`
+	tokenQueary := ` 
+	CREATE TABLE IF NOT EXISTS sessions(
+	token_hash BYTEA PRIMARY KEY,
+	user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+	created_at TIMESTAMPTZ DEFAULT now(),
+	expire_at	TIMESTAMPTZ NOT NULL
+	);`
 
 	postQueary := `
 	CREATE TABLE IF NOT EXISTS posts(
@@ -28,6 +35,10 @@ func CreateUserTable(ctx context.Context, pool *pgxpool.Pool) error {
 		return err
 	}
 	_, err = pool.Exec(ctx, postQueary)
+	if err != nil {
+		return err
+	}
+	_, err = pool.Exec(ctx, tokenQueary)
 	if err != nil {
 		return err
 	}

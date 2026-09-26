@@ -94,7 +94,7 @@ func Posts(pool *pgxpool.Pool) http.HandlerFunc{
 			page , err := strconv.Atoi(pagestring)
 			//id , err := strconv.Atoi(idstring)
 
-			result ,err := db.Getposts(r.Context(), pool , id ,2*(page),2*(page -1))
+			result ,err := db.Getposts(r.Context(), pool , id ,3,3*(page -1))
 			if err != nil {
 				fmt.Fprintf(w, "there was. aerror reading. %s", err)
 			}
