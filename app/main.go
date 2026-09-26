@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
-	
+
 	"net/http"
 	"os"
 	"os/signal"
@@ -41,7 +41,7 @@ func main() {
 	}
 
 	svr := http.Server{
-		Handler:     routes.NewHandler(pool , servermux),
+		Handler:     routes.NewHandler(pool, servermux),
 		Addr:        ":8080",
 		IdleTimeout: 10 * time.Second,
 	}
