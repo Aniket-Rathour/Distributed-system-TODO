@@ -10,7 +10,6 @@ import (
 	"time"
 	"todo/app/db"
 	"todo/app/routes"
-
 	"github.com/joho/godotenv"
 )
 
