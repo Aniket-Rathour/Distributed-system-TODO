@@ -3,52 +3,57 @@ package main
 import (
 	"context"
 	"fmt"
+	
 	"net/http"
 	"os"
 	"os/signal"
-	"syscall"
 	"time"
+	"todo/app/db"
+	"todo/app/routes"
 
-	"github.com/Aniket-Rathour/Distibuted-system-TODO/db"
-	"github.com/Aniket-Rathour/Distibuted-system-TODO/routes"
 	"github.com/joho/godotenv"
 )
 
-func main(){
+func main() {
+	servermux := http.NewServeMux()
 	err := godotenv.Load("../.env")
 	if err != nil {
-		fmt.Println("thre was a error reading env")
-		os.Exit(2)
+		fmt.Printf("Error loading .env file: %v", err)
 	}
-	//ctx1 := make(chan os.Signal ,1 )
-	ctx , stop := signal.NotifyContext(context.Background() , os.Interrupt, syscall.SIGTERM)
+	dbstring := os.Getenv("DB_STRING")
+	servermux.HandleFunc("/home", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintf(w, "this is home dude ")
+	})
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()
-	pool , err :=db.Connect(context.Background())
+	pool, err := db.ConnectDb(ctx, dbstring)
 	if err != nil {
-		fmt.Println("thre was a connecting to db" ,err)
-		os.Exit(1)
+		fmt.Println("failed to connet to db ")
+	} else {
+		fmt.Println("connected to db....")
 	}
-	defer pool.Close()
-	if err= db.Migrate(context.Background(), pool); err!= nil{
-		fmt.Println("failed to migrate schema:", err)
-		os.Exit(1)
-	}
-	
-	mux := http.NewServeMux()
-	routes.RegisterRoutes(mux ,pool)
-	server := http.Server{
-		Addr: os.Getenv("PORT"),
-		Handler: mux,
-	}
-	
-	go func(){
-		server.ListenAndServe()
-	}()
 
+	err = db.CreateUserTable(ctx, pool)
+	if err != nil {
+		fmt.Println("there was a error in creadint ht etable ")
+	} else {
+		fmt.Println("the datels were created....")
+	}
+
+	svr := http.Server{
+		Handler:     routes.NewHandler(pool , servermux),
+		Addr:        ":8080",
+		IdleTimeout: 10 * time.Second,
+	}
+	go func() {
+		svr.ListenAndServe()
+	}()
 	<-ctx.Done()
-	fmt.Println("the server is closing")
-	timectx ,close := context.WithTimeout(context.Background() ,10*time.Second)
+	fmt.Println("closing the server/...")
+	timectx, close := context.WithTimeout(context.Background(), 10*time.Second)
 	defer close()
-	server.Shutdown(timectx)
-	
+	if err := svr.Shutdown(timectx); err != nil {
+		fmt.Println("timeout , or failed to close the server....")
+	}
+	fmt.Println("server stopped cleanly")
 }

@@ -21,8 +21,9 @@ func insertPost(ctx context.Context , pool *pgxpool.Pool , id int ,title , conte
 }
 
 func deletePOst(ctx context.Context , pool *pgxpool.Pool){
-	deletion schema := `
+	deletionSchema := `
 	DELETE FROM posts
 	WHERE id = &1
 	`
+	_ = deletionSchema
 }
