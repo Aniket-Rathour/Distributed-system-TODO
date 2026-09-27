@@ -34,6 +34,6 @@ func UseridFromTocken(ctx context.Context, pool *pgxpool.Pool, raw string) (int,
 	sum := sha256.Sum256([]byte(raw))
 	var userID int
 	err := pool.QueryRow(ctx,
-		`SELECT user_id FROM sessions WHERE token_hash = $1 AND expires_at > now()`, sum[:]).Scan(&userID)
+		`SELECT user_id FROM sessions WHERE token_hash = $1 AND expire_at > now()`, sum[:]).Scan(&userID)
 	return userID, err
 }

@@ -8,9 +8,9 @@ import (
 )
 
 func NewHandler(pool *pgxpool.Pool, mux *http.ServeMux) *http.ServeMux {
-
 	mux.HandleFunc("POST /users", Users(pool))
 	mux.HandleFunc("GET /users", Users(pool))
+	mux.HandleFunc("PUT /users", Users(pool))
 	mux.Handle("POST /posts", middleware.TokenCheck(pool, Posts(pool)))
 	mux.Handle("GET /posts/{Id}", middleware.TokenCheck(pool, Posts(pool)))
 	mux.Handle("PUT /posts", middleware.TokenCheck(pool, Posts(pool)))
